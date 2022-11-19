@@ -1,0 +1,101 @@
+version: '3'
+
+networks:
+  laravel2:
+
+services:
+  site:
+    build:
+      context: ./dockerfiles
+      dockerfile: nginx.dockerfile
+      args:
+        - UID=${UID:-1000}
+        - GID=${GID:-1000}
+    container_name: nginx2
+    ports:
+      - 86:80
+    volumes:
+      - ./src:/var/www/html:delegated
+    depends_on:
+      - php2
+      - mysql2
+    networks:
+      - laravel2
+
+  mysql2:
+    image: mariadb:10.6
+    container_name: mysql2
+    restart: unless-stopped
+    tty: true
+    ports:
+      - 3310:3306
+    environment:
+      MYSQL_DATABASE: homestead
+      MYSQL_USER: homestead
+      MYSQL_PASSWORD: secret
+      MYSQL_ROOT_PASSWORD: secret
+      SERVICE_TAGS: dev
+      SERVICE_NAME: mysql2
+    networks:
+      - laravel2
+
+  php2:
+    build:
+      context: ./dockerfiles
+      dockerfile: php.dockerfile
+      args:
+        - UID=${UID:-1000}
+        - GID=${GID:-1000}
+    container_name: php2
+    volumes:
+      - ./src:/var/www/html:delegated
+    networks:
+      - laravel2
+
+  composer:
+    build:
+      context: ./dockerfiles
+      dockerfile: composer.dockerfile
+      args:
+        - UID=${UID:-1000}
+        - GID=${GID:-1000}
+    container_name: composer
+    volumes:
+      - ./src:/var/www/html
+    working_dir: /var/www/html
+    depends_on:
+      - php2
+    user: laravel
+    entrypoint: ['composer', '--ignore-platform-reqs']
+    networks:
+      - laravel2
+
+  npm:
+    image: node:13.7
+    container_name: npm
+    volumes:
+      - ./src:/var/www/html
+    ports:
+      - 3000:3000
+      - 3001:3001
+    working_dir: /var/www/html
+    entrypoint: ['npm']
+    networks:
+      - laravel2
+
+  artisan2:
+    build:
+      context: ./dockerfiles
+      dockerfile: php.dockerfile
+      args:
+        - UID=${UID:-1000}
+        - GID=${GID:-1000}
+    container_name: artisan2
+    volumes:
+      - ./src:/var/www/html:delegated
+    depends_on:
+      - mysql2
+    working_dir: /var/www/html
+    entrypoint: ['php', '/var/www/html/artisan']
+    networks:
+      - laravel2
