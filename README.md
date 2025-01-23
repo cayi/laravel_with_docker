@@ -1,6 +1,5 @@
-# Formato publico en blanco para desarrollar una APP de Laravel 10 con Docker
-## Proyecto Publico para elaborar un cuestionario para las necesidades de capacitaci+on del Personal, pero puede ser cualquier
-## proyecto que use Laravel 10, MariaDB con Docker y pocos recursos de Hardware, Requisitos :
+# Formato público en blanco para desarrollar una APP de Laravel 10 con Docker
+## Proyecto Público para elaborar un cuestionario para las necesidades de capacitaci+on del Personal, pero puede ser cualquier proyecto que use Laravel 10, MariaDB con Docker y pocos recursos de Hardware, Requisitos:
 
 Tener configurado o instalado en forma nativa o virtual en la plataforma del codigo fuente:
 
@@ -17,8 +16,18 @@ Tener configurado o instalado en forma nativa o virtual en la plataforma del cod
 > https://mariadb.org/download/?t=mariadb&p=mariadb&r=10.6.5&os=windows&cpu=x86_64&pkg=zip&m=xtom_fre
 
 ## Instalacion y configuracion
+### Paso 0  (como ejemplo ingresar como noroot en Ubuntu 22.04 LTS, solo 2Gb RAM y 2 nucleos)
+Crear un directorio nuevo para esta APP, por ejemplo dnc
+`mkdir dnc`
+`cd dnc`
+`git clone https://github.com/cayi/laravel_with_docker .`  
+`docker-compose up -d --build site`
+`cd src`
+`rm README.md`
+
 ### Paso 1 .- Instalar laravel y la aplicacion web (NOTA como ejemplo esta el proyecto DNC )
-`git clone https://github.com/ivanchenoweth/dnc`
+`git clone https://github.com/ivanchenoweth/dnc .`
+
 `composer install --ignore-platform-req=ext-gd --ignore-platform-req=ext-fileinfo`
 ### Paso 2 .- Configuracion con el DBMS:
  copiar el archivo '.env.example' como '.env'

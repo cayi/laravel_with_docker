@@ -1,7 +1,7 @@
 version: '3'
 
 networks:
-  laravel2:
+  laravel1:
 
 services:
   site:
@@ -11,68 +11,68 @@ services:
       args:
         - UID=${UID:-1000}
         - GID=${GID:-1000}
-    container_name: nginx2
+    container_name: nginx1
     ports:
-      - 86:80
+      - 81:80
     volumes:
       - ./src:/var/www/html:delegated
     depends_on:
-      - php2
-      - mysql2
+      - php1
+      - mysql1
     networks:
-      - laravel2
+      - laravel1
 
-  mysql2:
+  mysql1:
     image: mariadb:10.6
-    container_name: mysql2
+    container_name: mysql1
     restart: unless-stopped
     tty: true
     ports:
-      - 3310:3306
+      - 3301:3306
     environment:
       MYSQL_DATABASE: homestead
       MYSQL_USER: homestead
       MYSQL_PASSWORD: secret
       MYSQL_ROOT_PASSWORD: secret
       SERVICE_TAGS: dev
-      SERVICE_NAME: mysql2
+      SERVICE_NAME: mysql1
     networks:
-      - laravel2
+      - laravel1
 
-  php2:
+  php1:
     build:
       context: ./dockerfiles
       dockerfile: php.dockerfile
       args:
         - UID=${UID:-1000}
         - GID=${GID:-1000}
-    container_name: php2
+    container_name: php1
     volumes:
       - ./src:/var/www/html:delegated
     networks:
-      - laravel2
+      - laravel1
 
-  composer2:
+  composer1:
     build:
       context: ./dockerfiles
       dockerfile: composer.dockerfile
       args:
         - UID=${UID:-1000}
         - GID=${GID:-1000}
-    container_name: composer2
+    container_name: composer1
     volumes:
       - ./src:/var/www/html
     working_dir: /var/www/html
     depends_on:
-      - php2
+      - php1
     user: laravel
     entrypoint: ['composer', '--ignore-platform-reqs']
     networks:
-      - laravel2
+      - laravel1
 
-  npm2:
+  npm1:
     image: node:13.7
-    container_name: npm2
+    container_name: npm1
     volumes:
       - ./src:/var/www/html
     ports:
@@ -81,21 +81,21 @@ services:
     working_dir: /var/www/html
     entrypoint: ['npm']
     networks:
-      - laravel2
+      - laravel1
 
-  artisan2:
+  artisan1:
     build:
       context: ./dockerfiles
       dockerfile: php.dockerfile
       args:
         - UID=${UID:-1000}
         - GID=${GID:-1000}
-    container_name: artisan2
+    container_name: artisan1
     volumes:
       - ./src:/var/www/html:delegated
     depends_on:
-      - mysql2
+      - mysql1
     working_dir: /var/www/html
     entrypoint: ['php', '/var/www/html/artisan']
     networks:
-      - laravel2
+      - laravel1
