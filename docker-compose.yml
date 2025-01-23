@@ -52,14 +52,14 @@ services:
     networks:
       - laravel2
 
-  composer:
+  composer2:
     build:
       context: ./dockerfiles
       dockerfile: composer.dockerfile
       args:
         - UID=${UID:-1000}
         - GID=${GID:-1000}
-    container_name: composer
+    container_name: composer2
     volumes:
       - ./src:/var/www/html
     working_dir: /var/www/html
@@ -70,9 +70,9 @@ services:
     networks:
       - laravel2
 
-  npm:
+  npm2:
     image: node:13.7
-    container_name: npm
+    container_name: npm2
     volumes:
       - ./src:/var/www/html
     ports:

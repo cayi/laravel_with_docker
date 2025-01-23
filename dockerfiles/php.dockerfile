@@ -1,4 +1,4 @@
-FROM php:8-fpm-alpine
+FROM php:8.3-fpm-alpine
 
 ARG UID
 ARG GID
@@ -36,6 +36,12 @@ RUN apk add --no-cache --virtual build-essentials \
     docker-php-ext-install exif && \
     docker-php-ext-install zip 
 ###############
+RUN apk add --no-cache --virtual .build-deps $PHPIZE_DEPS imagemagick-dev \
+	&& pecl install imagick \
+	&& docker-php-ext-enable imagick \
+	&& apk del .build-deps
+RUN apk add php83-pecl-imagick --repository=https://dl-cdn.alpinelinux.org/alpine/edge/community
+##########
 
 RUN mkdir -p /usr/src/php/ext/redis \
     && curl -L https://github.com/phpredis/phpredis/archive/5.3.4.tar.gz | tar xvz -C /usr/src/php/ext/redis --strip 1 \
@@ -44,3 +50,6 @@ RUN mkdir -p /usr/src/php/ext/redis \
 
 CMD ["php-fpm", "-y", "/usr/local/etc/php-fpm.conf", "-R"]
 
+RUN echo 'memory_limit = 512M'       >> /usr/local/etc/php/conf.d/docker-php-memlimit.ini;
+RUN echo 'post_max_size = 64M'       >> /usr/local/etc/php/conf.d/docker-php-post_max_size.ini;
+RUN echo 'upload_max_filesize = 64M' >> /usr/local/etc/php/conf.d/docker-php-upload_max_filesize.ini;
